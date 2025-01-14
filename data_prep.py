@@ -38,14 +38,22 @@ def normalize_text(text):
 
 
 # Convert WAV to mel-spectrogram
-def wav_to_mel(wav_path, sample_rate=22050, n_mels=80):
+def wav_to_mel(file_path, sample_rate=22050, n_mels=80, n_fft=1024, hop_length=256):
     """
-    Convert a WAV file to a mel-spectrogram.
+    Convert audio file to mel-spectrogram.
     """
-    y, sr = librosa.load(wav_path, sr=sample_rate)
-    mel_spec = librosa.feature.melspectrogram(y, sr=sr, n_mels=n_mels)
-    mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
-    return mel_spec_db
+    # Load audio
+    audio, sr = librosa.load(file_path, sr=sample_rate)
+
+    # Compute mel-spectrogram
+    mel_spec = librosa.feature.melspectrogram(
+        y=audio, sr=sr, n_fft=n_fft, hop_length=hop_length, n_mels=n_mels
+    )
+
+    # Convert to log scale
+    mel_spec = librosa.power_to_db(mel_spec, ref=np.max)
+
+    return mel_spec
 
 
 def trim_silence(audio, top_db=20):
@@ -78,6 +86,23 @@ def preprocess_audio(file_path, target_sr=22050):
     # Save preprocessed audio
     sf.write(file_path, audio, target_sr)
 
+
+def augment_audio(audio, sample_rate=22050, method="time_stretch", factor=1.2):
+    """
+    Apply data augmentation to audio.
+    Args:
+    - method: Augmentation method ('time_stretch', 'pitch_shift', 'noise').
+    - factor: Parameter for augmentation (e.g., speed or pitch).
+    """
+    if method == "time_stretch":
+        return librosa.effects.time_stretch(audio, rate=factor)
+    elif method == "pitch_shift":
+        return librosa.effects.pitch_shift(audio, sr=sample_rate, n_steps=factor)
+    elif method == "noise":
+        noise = np.random.normal(0, 0.01, len(audio))
+        return audio + noise
+    else:
+        raise ValueError("Unsupported augmentation method.")
 
 
 
