@@ -103,25 +103,3 @@ def augment_audio(audio, sample_rate=22050, method="time_stretch", factor=1.2):
         return audio + noise
     else:
         raise ValueError("Unsupported augmentation method.")
-
-
-
-# Example usage
-data_dir = "./dataset"
-metadata_file = "metadata.csv"
-metadata = prepare_dataset(data_dir, metadata_file)
-
-# Example usage
-wav_path = "./dataset/audio/sample.wav"
-mel_spec = wav_to_mel(wav_path)
-
-# Plot mel-spectrogram
-plt.figure(figsize=(10, 4))
-librosa.display.specshow(mel_spec, sr=22050, x_axis='time', y_axis='mel')
-plt.colorbar(format='%+2.0f dB')
-plt.title('Mel-Spectrogram')
-plt.show()
-
-
-
-
