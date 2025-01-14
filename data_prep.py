@@ -4,6 +4,7 @@ import unicodedata
 import pandas as pd
 import librosa
 import numpy as np
+import soundfile as sf
 import matplotlib.pyplot as plt
 
 # Define dataset structure
@@ -36,7 +37,6 @@ def normalize_text(text):
     return text
 
 
-
 # Convert WAV to mel-spectrogram
 def wav_to_mel(wav_path, sample_rate=22050, n_mels=80):
     """
@@ -46,6 +46,39 @@ def wav_to_mel(wav_path, sample_rate=22050, n_mels=80):
     mel_spec = librosa.feature.melspectrogram(y, sr=sr, n_mels=n_mels)
     mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
     return mel_spec_db
+
+
+def trim_silence(audio, top_db=20):
+    """
+    Trim silence from the beginning and end of the audio.
+    Args:
+    - audio: Audio signal as a NumPy array.
+    - top_db: Decibel threshold for silence.
+    Returns:
+    - Trimmed audio.
+    """
+    return librosa.effects.trim(audio, top_db=top_db)[0]
+
+
+def preprocess_audio(file_path, target_sr=22050):
+    """
+    Converts audio to a standard format
+    Load, resample, normalize, and save audio.
+    """
+    # Load audio
+    audio, sr = librosa.load(file_path, sr=None, mono=True)
+
+    # Resample audio
+    if sr != target_sr:
+        audio = librosa.resample(audio, orig_sr=sr, target_sr=target_sr)
+
+    # Normalize audio
+    audio = audio / max(abs(audio))
+
+    # Save preprocessed audio
+    sf.write(file_path, audio, target_sr)
+
+
 
 
 # Example usage
