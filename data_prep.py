@@ -5,7 +5,9 @@ import pandas as pd
 import librosa
 import numpy as np
 import soundfile as sf
+from g2p_en import G2p
 import matplotlib.pyplot as plt
+import inflect
 
 # Define dataset structure
 def prepare_dataset(data_dir, metadata_file):
@@ -26,6 +28,9 @@ def prepare_dataset(data_dir, metadata_file):
 
 
 
+###################################
+###      Text Preprocessing     ###
+###################################
 # Normalize Yoruba text
 def normalize_text(text):
     """
@@ -36,6 +41,42 @@ def normalize_text(text):
     text = text.lower().strip()
     return text
 
+
+def expand_numbers_and_abbreviations(text):
+    """
+    Expand numbers and abbreviations in text.
+    """
+    engine = inflect.engine()
+
+    # Expand numbers
+    words = []
+    for word in text.split():
+        if word.isdigit():
+            words.append(engine.number_to_words(word))
+        else:
+            words.append(word)
+    
+    # Handle common abbreviations
+    expanded_text = " ".join(words)
+    expanded_text = expanded_text.replace("Dr.", "Doctor")
+    expanded_text = expanded_text.replace("etc.", "et cetera")
+    
+    return expanded_text.lower()
+
+
+def text_to_phonemes(text):
+    """
+    Convert text to phonemes using g2p.
+    """
+    g2p = G2p()
+    phonemes = g2p(text)
+    return " ".join(phonemes)
+
+
+
+###################################
+###     Sound Preprocessing     ###
+###################################
 
 # Convert WAV to mel-spectrogram
 def wav_to_mel(file_path, sample_rate=22050, n_mels=80, n_fft=1024, hop_length=256):
