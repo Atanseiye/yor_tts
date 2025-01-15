@@ -1,8 +1,4 @@
-import pandas as pd
-from model_training import model
-from keras.models import Sequential
-from preprocessing import token_pad, cleaning
-from sklearn.model_selection import train_test_split
+
 
 yor_text = pd.read_csv('')
 eng_text = pd.read_csv('')
