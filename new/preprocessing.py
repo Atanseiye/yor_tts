@@ -1,13 +1,3 @@
-import re
-import string
-import nltk
-# import tensorflow as tf
-nltk.download('wordnet')
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 stemmer = nltk.SnowballStemmer('english')
