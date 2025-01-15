@@ -34,5 +34,4 @@ def fetch_data(mongo_uri, batch=-1):
     return {'yoruba':tensor(yor_text[:batch]),
             'englisg': tensor(eng_text[:batch])}
 
-data = fetch_data(mongo_uri, batch=5)
-print(data)
+
